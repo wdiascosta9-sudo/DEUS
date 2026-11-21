@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>PH VIP - Sensibilidade Free Fire</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',sans-serif; }
+  body {
+    background: radial-gradient(circle at top, #0a0a1a, #000);
+    color:#fff; min-height:100vh; overflow-x:hidden;
+  }
+  .screen { display:none; padding:30px; min-height:100vh; animation:fadeIn .6s ease; }
+  .screen.active { display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
+
+  .logo {
+    font-size:3em; font-weight:900;
+    background: linear-gradient(90deg,#ffd700,#ff8c00,#ffd700);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    text-shadow:0 0 30px rgba(255,215,0,.5);
+    margin-bottom:10px; letter-spacing:3px;
+  }
+  .sub { color:#00d4ff; font-size:.9em; margin-bottom:30px; letter-spacing:2px; text-align:center; }
+
+  .card {
+    background: linear-gradient(145deg, rgba(20,20,40,.9), rgba(10,10,20,.9));
+    border:1px solid rgba(255,215,0,.3);
+    border-radius:20px; padding:30px; width:100%; max-width:400px;
+    box-shadow:0 0 40px rgba(0,212,255,.2), inset 0 0 20px rgba(255,215,0,.05);
+    backdrop-filter: blur(10px);
+  }
+
+  input {
+    width:100%; padding:15px; margin:10px 0;
+    background: rgba(0,0,0,.5); border:1px solid rgba(0,212,255,.4);
+    border-radius:10px; color:#fff; font-size:1em; outline:none;
+    transition:all .3s;
+  }
+  input:focus {
+    border-color:#ffd700; box-shadow:0 0 15px rgba(255,215,0,.5);
+  }
+
+  .btn {
+    width:100%; padding:15px; margin-top:15px;
+    background: linear-gradient(90deg,#ffd700,#ff8c00);
+    border:none; border-radius:10px; color:#000;
+    font-weight:bold; font-size:1.1em; cursor:pointer;
+    letter-spacing:2px; transition:all .3s;
+    box-shadow:0 0 20px rgba(255,215,0,.4);
+  }
+  .btn:hover { transform:translateY(-2px); box-shadow:0 0 30px rgba(255,215,0,.7); }
+
+  .brand-grid {
+    display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:15px;
+  }
+  .brand {
+    padding:18px 10px; background:rgba(0,212,255,.08);
+    border:1px solid rgba(0,212,255,.3); border-radius:12px;
+    text-align:center; cursor:pointer; transition:all .3s;
+    font-weight:bold;
+  }
+  .brand:hover {
+    background:rgba(255,215,0,.15); border-color:#ffd700;
+    transform:scale(1.05); box-shadow:0 0 20px rgba(255,215,0,.4);
+  }
+  .brand .emoji { font-size:1.8em; display:block; margin-bottom:5px; }
+
+  .result-item {
+    background:rgba(0,0,0,.4); border-left:3px solid #ffd700;
+    padding:12px 15px; margin:8px 0; border-radius:8px;
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .result-item .label { color:#00d4ff; font-size:.9em; }
+  .result-item .value { color:#ffd700; font-weight:bold; font-size:1.1em; }
+
+  .section-title {
+    color:#ffd700; font-size:1.2em; margin:15px 0 10px;
+    border-bottom:1px solid rgba(255,215,0,.3); padding-bottom:5px;
+  }
+
+  .vip-badge {
+    position:absolute; top:20px; right:20px;
+    background:linear-gradient(90deg,#ffd700,#ff8c00);
+    color:#000; padding:5px 15px; border-radius:20px;
+    font-weight:bold; font-size:.8em; letter-spacing:2px;
+  }
+
+  .error { color:#ff4444; text-align:center; margin-top:10px; min-height:20px; }
+  .success { color:#00ff88; text-align:center; margin-top:10px; }
+
+  .tech-lines {
+    position:fixed; top:0; left:0; width:100%; height:100%;
+    pointer-events:none; z-index:-1; opacity:.3;
+    background-image:
+      linear-gradient(rgba(0,212,255,.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,.1) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .config-icon {
+    position:absolute; top:20px; left:20px;
+    font-size:1.8em; cursor:pointer; color:#00d4ff;
+    transition:all .3s; user-select:none;
+  }
+  .config-icon:hover { 
+    transform:scale(1.2) rotate(90deg); 
+    text-shadow:0 0 20px rgba(0,212,255,.8); 
+  }
+
+  .key-display {
+    background:rgba(255,215,0,.1); border:2px solid #ffd700;
+    padding:20px; margin:15px 0; border-radius:10px;
+    text-align:center; font-size:1.3em; font-weight:bold;
+    color:#ffd700; letter-spacing:3px;
+    word-break:break-all;
+  }
+
+  .warning {
+    background:rgba(255,68,68,.1); border:1px solid #ff4444;
+    padding:15px; margin:15px 0; border-radius:10px;
+    color:#ff4444; text-align:center; font-size:.9em;
+  }
+
+  .info-box {
+    background:rgba(0,212,255,.1); border:1px solid #00d4ff;
+    padding:15px; margin:15px 0; border-radius:10px;
+    color:#00d4ff; text-align:center; font-size:.9em;
+  }
+
+  .back-btn {
+    background:rgba(0,212,255,.2); border:1px solid #00d4ff;
+    color:#00d4ff; padding:10px 20px; border-radius:8px;
+    cursor:pointer; margin-top:15px; transition:all .3s;
+    display:block; text-align:center; width:100%;
+  }
+  .back-btn:hover { background:rgba(0,212,255,.3); }
+
+  .chave-list {
+    max-height:200px; overflow-y:auto; margin:15px 0;
+  }
+  .chave-item {
+    background:rgba(0,0,0,.4); border-left:3px solid #00d4ff;
+    padding:10px; margin:5px 0; border-radius:5px;
+    font-size:.85em; display:flex; justify-content:space-between; align-items:center;
+  }
+  .chave-item.usada { border-left-color:#ff4444; opacity:.6; }
+  .status { font-size:.75em; padding:2px 8px; border-radius:10px; font-weight:bold; }
+  .status.disponivel { background:#00ff88; color:#000; }
+  .status.usada { background:#ff4444; color:#fff; }
+
+  /* ============ TIMER DE 5 SEGUNDOS ============ */
+  .timer-box {
+    position:fixed; top:20px; left:50%; transform:translateX(-50%);
+    background: linear-gradient(135deg, rgba(255,0,64,.9), rgba(255,68,68,.9));
+    border:2px solid #fff;
+    padding:15px 30px; border-radius:50px;
+    display:flex; align-items:center; gap:15px;
+    box-shadow:0 0 30px rgba(255,0,64,.6);
+    z-index:100; animation:pulse 1s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { box-shadow:0 0 30px rgba(255,0,64,.6); }
+    50% { box-shadow:0 0 50px rgba(255,0,64,.9); }
+  }
+  .timer-icon { font-size:1.5em; }
+  .timer-text { color:#fff; font-weight:bold; letter-spacing:1px; }
+  .timer-count {
+    background:#fff; color:#ff0040;
+    width:40px; height:40px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.5em; font-weight:900;
+    animation:countPulse 1s infinite;
+  }
+  @keyframes countPulse {
+    0%,100% { transform:scale(1); }
+    50% { transform:scale(1.15); }
+  }
+
+  .print-alert {
+    background: linear-gradient(90deg, rgba(255,215,0,.2), rgba(255,140,0,.2));
+    border:2px solid #ffd700;
+    padding:15px; margin:15px 0; border-radius:10px;
+    text-align:center; color:#ffd700;
+    font-weight:bold; animation:blink 1s infinite;
+  }
+  @keyframes blink {
+    0%,100% { opacity:1; }
+    50% { opacity:.6; }
+  }
+</style>
+</head>
+<body>
+<div class="tech-lines"></div>
+
+<!-- TELA 1: LOGIN PRINCIPAL -->
+<div id="login" class="screen active">
+  <div class="vip-badge">VIP</div>
+  <div class="config-icon" onclick="abrirConfig()">⚙️</div>
+  <div class="logo">PH VIP</div>
+  <div class="sub">⚡ TECNOLOGIA DE ELITE ⚡</div>
+  <div class="card">
+    <h2 style="text-align:center;color:#00d4ff;margin-bottom:20px;">🔐 ACESSO RESTRITO</h2>
+    <input type="text" id="senha" placeholder="Digite PH ou sua chave VIP" maxlength="20" style="text-transform:uppercase;">
+    <button class="btn" onclick="entrar()">ENTRAR</button>
+    <div class="error" id="erro"></div>
+    <div class="info-box" style="margin-top:15px;">
+      💡 <strong>PH</strong> = Acesso infinito<br>
+      🔑 <strong>Chave VIP</strong> = Uso único
+    </div>
+  </div>
+</div>
+
+<!-- TELA 2: CONFIG -->
+<div id="config" class="screen">
+  <div class="vip-badge">CONFIG</div>
+  <div class="logo" style="font-size:2em;">⚙️ CONFIGURAÇÕES</div>
+  <div class="sub">🔒 ÁREA RESTRITA DO ADM</div>
+  <div class="card">
+    <h2 style="text-align:center;color:#ffd700;margin-bottom:20px;">🛡️ AUTENTICAÇÃO</h2>
+    <input type="password" id="senhaConfig" placeholder="Digite a senha secreta" maxlength="10" style="text-transform:uppercase;">
+    <button class="btn" onclick="validarConfig()">🔓 ACESSAR</button>
+    <div class="error" id="erroConfig"></div>
+    <button class="back-btn" onclick="voltarLogin()">← Voltar ao Login</button>
+  </div>
+</div>
+
+<!-- TELA 3: GERADOR DE CHAVES -->
+<div id="gerador" class="screen">
+  <div class="vip-badge">ADM</div>
+  <div class="logo" style="font-size:2em;">👑 PAINEL ADM</div>
+  <div class="sub">⚡ GERADOR DE CHAVES VIP ⚡</div>
+  <div class="card">
+    <div class="section-title">🔑 GERAR NOVA CHAVE</div>
+    <button class="btn" onclick="gerarChave()" style="background:linear-gradient(90deg,#00ff88,#00cc6a);">✨ GERAR CHAVE VIP</button>
+    <div id="chaveBox" style="display:none;">
+      <div class="key-display" id="chaveGerada"></div>
+      <button class="btn" onclick="copiarChave()">📋 COPIAR CHAVE</button>
+      <div class="success" id="msgChave"></div>
+    </div>
+
+    <div class="section-title">📋 CHAVES GERADAS</div>
+    <div class="chave-list" id="listaChaves"></div>
+
+    <div class="warning">
+      ⚠️ <strong>PH</strong> = infinita (sempre funciona)<br>
+      ⚠️ <strong>Chaves geradas</strong> = só 1 uso
+    </div>
+
+    <button class="back-btn" onclick="voltarLogin()">← Voltar ao Login</button>
+  </div>
+</div>
+
+<!-- TELA 4: ESCOLHER MARCA -->
+<div id="marca" class="screen">
+  <div class="vip-badge">VIP</div>
+  <div class="logo">ESCOLHA SEU CELULAR</div>
+  <div class="sub">📱 SELECIONE A MARCA DO SEU DISPOSITIVO</div>
+  <div class="card">
+    <div class="brand-grid">
+      <div class="brand" onclick="escolher('Samsung')"><span class="emoji">📱</span>Samsung</div>
+      <div class="brand" onclick="escolher('Xiaomi')"><span class="emoji">🔥</span>Xiaomi</div>
+      <div class="brand" onclick="escolher('Motorola')"><span class="emoji">⚡</span>Motorola</div>
+      <div class="brand" onclick="escolher('iPhone')"><span class="emoji">🍎</span>iPhone</div>
+      <div class="brand" onclick="escolher('Realme')"><span class="emoji">🚀</span>Realme</div>
+      <div class="brand" onclick="escolher('POCO')"><span class="emoji">💎</span>POCO</div>
+      <div class="brand" onclick="escolher('Redmi')"><span class="emoji">🎯</span>Redmi</div>
+      <div class="brand" onclick="escolher('Infinix')"><span class="emoji">🌟</span>Infinix</div>
+    </div>
+  </div>
+</div>
+
+<!-- TELA 5: RESULTADO (com timer) -->
+<div id="resultado" class="screen">
+  <div class="vip-badge">VIP</div>
+  <div class="logo">SENSIBILIDADE VIP</div>
+  <div class="sub" id="marcaInfo"></div>
+  
+  <!-- ALERTA DE PRINT -->
+  <div class="print-alert">
+    📸 TIRE UM PRINT AGORA! Você tem <span id="printTime">5</span> segundos!
+  </div>
+  
+  <div class="card">
+    <div class="section-title">🎯 SENSIBILIDADE</div>
+    <div id="sens"></div>
+
+    <div class="section-title">🕹️ BOTÃO ANALÓGICO (JOYSTICK)</div>
+    <div id="botao"></div>
+
+    <div class="section-title">⚙️ DPI RECOMENDADA</div>
+    <div id="dpi"></div>
+  </div>
+</div>
+
+<script>
+// Base de dados por marca
+const dados = {
+  Samsung:   {sens:[85,78,72,68,55,70], botao:[75,65], dpi:420},
+  Xiaomi:    {sens:[95,88,82,75,60,78], botao:[80,70], dpi:450},
+  Motorola:  {sens:[80,75,68,65,52,68], botao:[70,60], dpi:400},
+  iPhone:    {sens:[70,65,60,58,48,62], botao:[65,55], dpi:380},
+  Realme:    {sens:[90,82,76,70,58,74], botao:[78,68], dpi:440},
+  POCO:      {sens:[98,90,85,78,62,80], botao:[82,72], dpi:460},
+  Redmi:     {sens:[92,85,78,72,58,75], botao:[78,68], dpi:445},
+  Infinix:   {sens:[88,80,74,68,56,72], botao:[76,66], dpi:430}
+};
+
+let chaveAtual = '';
+let timerInterval = null;
+
+function getChaves() {
+  return JSON.parse(localStorage.getItem('chaves_vip') || '[]');
+}
+
+function salvarChaves(chaves) {
+  localStorage.setItem('chaves_vip', JSON.stringify(chaves));
+}
+
+// ============ LOGIN PRINCIPAL ============
+function entrar(){
+  const input = document.getElementById('senha').value.trim().toUpperCase();
+  
+  if(!input){
+    document.getElementById('erro').innerText = '❌ Digite algo!';
+    return;
+  }
+  
+  if(input === 'PH'){
+    document.getElementById('erro').innerText = '';
+    document.getElementById('login').classList.remove('active');
+    document.getElementById('marca').classList.add('active');
+    return;
+  }
+  
+  const chaves = getChaves();
+  const chaveObj = chaves.find(c => c.codigo === input);
+  
+  if(!chaveObj){
+    document.getElementById('erro').innerText = '❌ Senha ou chave inválida!';
+    return;
+  }
+  
+  if(chaveObj.usada){
+    document.getElementById('erro').innerText = '❌ Esta chave já foi utilizada! Gere outra.';
+    return;
+  }
+  
+  chaveObj.usada = true;
+  chaveObj.dataUso = new Date().toLocaleString('pt-BR');
+  salvarChaves(chaves);
+  
+  document.getElementById('erro').innerText = '';
+  document.getElementById('login').classList.remove('active');
+  document.getElementById('marca').classList.add('active');
+}
+
+// ============ CONFIG ============
+function abrirConfig(){
+  document.getElementById('login').classList.remove('active');
+  document.getElementById('config').classList.add('active');
+}
+
+function validarConfig(){
+  const senha = document.getElementById('senhaConfig').value.trim().toUpperCase();
+  if(senha === 'PH'){
+    document.getElementById('config').classList.remove('active');
+    document.getElementById('gerador').classList.add('active');
+    atualizarListaChaves();
+  } else {
+    document.getElementById('erroConfig').innerText = '❌ Senha incorreta!';
+  }
+}
+
+// ============ GERADOR DE CHAVES ============
+function gerarChave(){
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let chave = 'VIP-';
+  for(let i=0; i<12; i++){
+    chave += chars.charAt(Math.floor(Math.random()*chars.length));
+    if(i===3 || i===7) chave += '-';
+  }
+  chaveAtual = chave;
+  
+  const chaves = getChaves();
+  chaves.push({
+    codigo: chave,
+    criada: new Date().toLocaleString('pt-BR'),
+    usada: false,
+    dataUso: null
+  });
+  salvarChaves(chaves);
+  
+  document.getElementById('chaveGerada').innerText = chave;
+  document.getElementById('chaveBox').style.display = 'block';
+  document.getElementById('msgChave').innerText = '';
+  atualizarListaChaves();
+}
+
+function copiarChave(){
+  navigator.clipboard.writeText(chaveAtual).then(()=>{
+    document.getElementById('msgChave').innerText = '✅ Chave copiada!';
+    setTimeout(()=>{ document.getElementById('msgChave').innerText = ''; },2000);
+  });
+}
+
+function atualizarListaChaves(){
+  const chaves = getChaves();
+  const lista = document.getElementById('listaChaves');
+  
+  if(chaves.length === 0){
+    lista.innerHTML = '<div style="text-align:center;color:#888;padding:20px;">Nenhuma chave gerada</div>';
+    return;
+  }
+  
+  lista.innerHTML = chaves.slice().reverse().map(c => `
+    <div class="chave-item ${c.usada ? 'usada' : ''}">
+      <div>
+        <div style="color:#ffd700;font-weight:bold;">${c.codigo}</div>
+        <div style="font-size:.7em;color:#888;">Criada: ${c.criada}</div>
+        ${c.usada ? `<div style="font-size:.7em;color:#ff4444;">Usada: ${c.dataUso}</div>` : ''}
+      </div>
+      <span class="status ${c.usada ? 'usada' : 'disponivel'}">${c.usada ? 'USADA' : 'ATIVA'}</span>
+    </div>
+  `).join('');
+}
+
+// ============ ESCOLHER MARCA ============
+function escolher(marca){
+  const d = dados[marca];
+  const variacao = () => Math.floor(Math.random()*5)-2;
+  const sens = d.sens.map(v => Math.max(1, Math.min(100, v + variacao())));
+  const botao = d.botao.map(v => Math.max(1, Math.min(100, v + variacao())));
+  const dpi = d.dpi + Math.floor(Math.random()*20)-10;
+
+  document.getElementById('marcaInfo').innerText = '📱 ' + marca.toUpperCase() + ' - CONFIG VIP';
+
+  const nomesSens = ['Geral','Red Dot','Mira 2x','Mira 4x','Mira AWM','Olhar Livre'];
+  document.getElementById('sens').innerHTML = nomesSens.map((n,i)=>`
+    <div class="result-item"><span class="label">${n}</span><span class="value">${sens[i]}</span></div>
+  `).join('');
+
+  document.getElementById('botao').innerHTML = `
+    <div class="result-item"><span class="label">Tamanho do Botão</span><span class="value">${botao[0]}%</span></div>
+    <div class="result-item"><span class="label">Posição X</span><span class="value">${botao[1]}%</span></div>
+    <div class="result-item"><span class="label">Posição Y</span><span class="value">${botao[1]+5}%</span></div>
+  `;
+
+  document.getElementById('dpi').innerHTML = `
+    <div class="result-item"><span class="label">DPI Recomendada</span><span class="value">${dpi}</span></div>
+    <div class="result-item"><span class="label">Resposta de Toque</span><span class="value">ALTA</span></div>
+  `;
+
+  document.getElementById('marca').classList.remove('active');
+  document.getElementById('resultado').classList.add('active');
+  
+  // INICIA TIMER DE 5 SEGUNDOS
+  iniciarTimer();
+}
+
+// ============ TIMER DE 5 SEGUNDOS ============
+function iniciarTimer(){
+  // Cancela timer anterior se existir
+  if(timerInterval) clearInterval(timerInterval);
+  
+  let tempo = 5;
+  document.getElementById('printTime').innerText = tempo;
+  
+  timerInterval = setInterval(() => {
+    tempo--;
+    document.getElementById('printTime').innerText = tempo;
+    
+    if(tempo <= 0){
+      clearInterval(timerInterval);
+      timerInterval = null;
+      // Volta pro login
+      voltarLogin();
+    }
+  }, 1000);
+}
+
+function pararTimer(){
+  if(timerInterval){
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+}
+
+function voltarLogin(){
+  pararTimer();
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('login').classList.add('active');
+  document.getElementById('senha').value = '';
+  document.getElementById('senhaConfig').value = '';
+  document.getElementById('erro').innerText = '';
+  document.getElementById('erroConfig').innerText = '';
+}
+
+// Enter nos inputs
+document.getElementById('senha').addEventListener('keypress', e => {
+  if(e.key === 'Enter') entrar();
+});
+document.getElementById('senhaConfig').addEventListener('keypress', e => {
+  if(e.key === 'Enter') validarConfig();
+});
+</script>
+</body>
+</html>
